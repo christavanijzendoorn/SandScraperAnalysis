@@ -25,6 +25,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
+vmin = 240
+vmax = 395
+
 grainsizes_dir = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Data/Noordwijk/Grainsizes/"
 grainsizes_file = 'Grainsize_data_Noordwijk.xlsx'
 output_dir = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Figures/VerticalSampling/"
@@ -57,7 +60,7 @@ plot_loc_row = [0, 1, 2, 0, 1, 2]
 sel_date2 = data.xs(date, level=1, drop_level=False)
 
 # Prepare coloring based on median value
-norm  = colors.Normalize(vmin=min(sel_date2['D50'])*1000, vmax=max(sel_date2['D50'])*1000)
+norm  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap = cmx.ScalarMappable(norm=norm, cmap='hot_r')
 sel_date2.loc[:,'colorval'] = sel_date2['D50']
 sel_date2['colorval'] = [scalarMap.to_rgba(d*1000) for d in sel_date2['colorval']]

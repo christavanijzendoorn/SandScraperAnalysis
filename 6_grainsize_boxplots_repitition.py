@@ -4,6 +4,20 @@ Created on Fri Oct 22 20:28:57 2021
 
 @author: cijzendoornvan
 """
+import numpy as np
+import math 
+
+def weighted_avg_and_std(values, weights):
+    """
+    Return the weighted average and standard deviation.
+    values, weights -- Numpy ndarrays with the same shape.
+    """
+    average = np.average(values, weights=weights)
+    variance = np.average((values-average)**2, weights=weights)
+    return (int(average), int(round(math.sqrt(variance), 0)))
+
+thicknesses = [2, 2, 4, 6, 6, 6, 6, 6, 6, 6]
+
 #%%#### PLOT VERTICAL SAMPLING
 
 import numpy as np
@@ -11,6 +25,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
+
+vmin = 240
+vmax = 390
 
 grainsizes_dir_NW = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Data/Noordwijk/Grainsizes/"
 grainsizes_file_NW = 'Grainsize_data_Noordwijk.xlsx'
@@ -33,7 +50,7 @@ locations = ['_05', '_06']
 data_NW = data_NW.xs(date, level=1, drop_level=False)
 
 # Prepare coloring based on median value
-norm  = colors.Normalize(vmin=data_NW['D50'].min()*1000, vmax=data_NW['D50'].max()*1000)
+norm  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap = cmx.ScalarMappable(norm=norm, cmap='hot_r')
 data_NW['colorval'] = data_NW['D50']
 data_NW['colorval'] = [scalarMap.to_rgba(d*1000) for d in data_NW['colorval']]
@@ -57,7 +74,7 @@ data_Duck['Depth'] = depths
 Duck = data_Duck.loc[data_Duck['Filename'].str.contains('sample2')]
 
 # Prepare coloring based on median value
-norm  = colors.Normalize(vmin=Duck['D50(mm)'].min()*1000, vmax=Duck['D50(mm)'].max()*1000)
+norm  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap = cmx.ScalarMappable(norm=norm, cmap='hot_r')
 Duck['colorval'] = Duck['D50(mm)']
 Duck['colorval'] = [scalarMap.to_rgba(d*1000) for d in Duck['colorval']]
@@ -82,12 +99,25 @@ for i, s in enumerate(locations):
         location = Duck.loc[Duck['Filename'].str.contains(s)]
         location_sort = location.set_index('Depth').sort_index() # set index to depth
         location_plot = location_sort[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].values.T * 1000 
+        
+        # Add average and standard deviation of median grain sizes
+        avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort.loc[:, 'D50(mm)'])])
+        props = dict(facecolor='white', edgecolor = 'white')
+        axs[plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
+        axs[plot_loc_col[i]].text(175, 11.95,'$\u00f8_{50}$ = ' + str(avg) , fontsize=15, bbox = props)
+            
 
     if '_0' in s:
         # Select data belonging to sample
         location = data_NW.xs(s, level=2, drop_level=False)
         location_sort = location.set_index('Depth').sort_index() # set index to depth
         location_plot = location_sort[['D16', 'D25', 'D50', 'D75', 'D84']].values.T * 1000 # convert to values in mm's
+        
+        # Add average and standard deviation of median grain sizes
+        avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50']*1000, thicknesses[:len(location_sort.loc[:, 'D50'])])
+        props = dict(facecolor='white', edgecolor = 'white')
+        axs[plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
+        axs[plot_loc_col[i]].text(175, 11.95,'$\u00f8_{50}$ = ' + str(avg), fontsize=15, bbox = props)        
     
     colors = location_sort['colorval']    
     
@@ -107,12 +137,12 @@ for i, s in enumerate(locations):
         
     # Set limits and ticks of subplot    
     axs[plot_loc_col[i]].set_xlim(150, 550)
-    axs[plot_loc_col[i]].set_ylim(0, 10.5)
+    axs[plot_loc_col[i]].set_ylim(0, 12.6)
     axs[plot_loc_col[i]].set_yticks(range(1,11))
     axs[plot_loc_col[i]].set_yticklabels(depths)
     
     axs[plot_loc_col[i]].tick_params(axis='both', which='major', labelsize=16)
-    axs[plot_loc_col[i]].tick_params(axis='both', which='minor', labelsize=16)
+    axs[plot_loc_col[i]].tick_params(axis='both', which='minor', labelsize=16)    
     
 # Flip axes so depth is shown correctly    
 plt.gca().invert_yaxis()    
@@ -127,20 +157,20 @@ for ax in axs.flat:
     
 # Add x-label and subplot titles    
 pad = 5
-ax.annotate('Noordwijk', xy=(-200, 1.5), xytext=(-230, 100), 
+ax.annotate('Noordwijk', xy=(-200, 1.5), xytext=(-230, 120), 
             xycoords=ax.yaxis.label, textcoords='offset points',
             size='xx-large', ha='right', va='center')    
 
-ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(-200, -120), 
+ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(-200, -125), 
             xycoords=ax.yaxis.label, textcoords='offset points',
             size='xx-large', ha='right', va='center')   
 
 pad = 5
-ax.annotate('Duck', xy=(-200, 1.5), xytext=(15, 100), 
+ax.annotate('Duck', xy=(-200, 1.5), xytext=(15, 120), 
             xycoords=ax.yaxis.label, textcoords='offset points',
             size='xx-large', ha='right', va='center')    
 
-ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(65, -120), 
+ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(65, -125), 
             xycoords=ax.yaxis.label, textcoords='offset points',
             size='xx-large', ha='right', va='center')   
 
@@ -187,4 +217,3 @@ Duck_2_avg = 1000* np.sum(Duck_2.loc[:, 'thickness']*Duck_2.loc[:, 'D50(mm)']) /
 
 Duck_1_grad_avg = 1000* np.sum(Duck_1.iloc[:8].loc[:,'thickness']*Duck_1.iloc[:8].loc[:, 'D50(mm)']) / np.sum(Duck_1.iloc[:8].loc[:, 'thickness'].values)
 Duck_2_grad_avg = 1000* np.sum(Duck_2.iloc[:7].loc[:,'thickness']*Duck_2.iloc[:7].loc[:, 'D50(mm)']) / np.sum(Duck_2.iloc[:7].loc[:, 'thickness'].values)
-

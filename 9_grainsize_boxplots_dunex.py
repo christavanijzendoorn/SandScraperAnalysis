@@ -26,6 +26,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
+vmin = 240
+vmax = 395
+
 camsizer_dir = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Data/Duck/Grainsizes//"
 input_file = 'Grainsize_data_Duck.xlsx'
 output_dir = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Figures/VerticalSampling/"
@@ -63,7 +66,7 @@ plot_loc_row = [0, 1, 2, 0, 1, 2, 0, 1, 2]
 plot_loc_col = [0, 0, 0, 1, 1, 1, 2, 2, 2]
 
 # Prepare coloring based on median value
-norm  = colors.Normalize(vmin=min(data['D50(mm)'])*1000, vmax=max(data['D50(mm)'])*1000)
+norm  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap = cmx.ScalarMappable(norm=norm, cmap='hot_r')
 data['colorval'] = data['D50(mm)']
 data['colorval'] = [scalarMap.to_rgba(d*1000) for d in data['colorval']]
@@ -161,7 +164,7 @@ plot_loc_row = [0, 1, 1, 0, 0, 0, 0, 1, 1, 1]
 plot_loc_col = [2, 1, 4, 0, 1, 3, 4, 0, 2, 3]
 
 # Prepare coloring based on median value
-norm2  = colors.Normalize(vmin=270, vmax=380)
+norm2  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap2 = cmx.ScalarMappable(norm=norm2, cmap='hot_r')
 data['colorval2'] = data['D50(mm)']
 data['colorval2'] = [scalarMap2.to_rgba(d*1000) for d in data['colorval2']]
@@ -248,7 +251,7 @@ plot_loc_row = [0, 0, 0, 0, 1, 1, 1, 1]
 plot_loc_col = [2, 0, 1, 3, 3, 2, 1, 0]
 
 # Prepare coloring based on median value
-norm3  = colors.Normalize(vmin=min(data['D50(mm)'])*1000, vmax=max(data['D50(mm)'])*1000)
+norm3  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap3 = cmx.ScalarMappable(norm=norm3, cmap='hot_r')
 data['colorval3'] = data['D50(mm)']
 data['colorval3'] = [scalarMap3.to_rgba(d*1000) for d in data['colorval3']]
