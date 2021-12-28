@@ -60,10 +60,12 @@ if os.path.isfile(f):
     maxq = np.max(q)
     q_corr = np.ndarray.flatten(100*(q-minq)/(maxq-minq))
     
+   
     # plot distribution
     fig1, ax1 = plt.subplots(1, 1, figsize=(7, 5))
+    fig1.subplots_adjust(bottom=0.2)
     ax1.plot(grain_size_mm, p, '-', color = 'royalblue', linewidth = 3, label = 'Waldport')
-    ax1.set_xlabel("Grain Size (mm)", fontsize = 20)
+    ax1.set_xlabel("Grain size ($\mu$m)", fontsize = 20)
     ax1.set_ylabel("Percentage (%)", fontsize = 20)
     ax1.set_xlim([0., 1])   
     
@@ -132,12 +134,13 @@ if os.path.isfile(f):
     minq = np.min(q)
     maxq = np.max(q)
     q_corr = np.ndarray.flatten(100*(q-minq)/(maxq-minq))
-    
+  
     ax1.plot(grain_size_mm, p, '-', color = 'goldenrod', linewidth = 3, label = 'Duck') 
-
    
-fig1.tight_layout()
+# fig1.tight_layout()
 ax1.legend(fontsize = 20)
+ax1.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
+ax1.set_xticklabels(['0', '200', '400', '600', '800', '1000'])
 ax1.tick_params(axis='both', which='major', labelsize=18)
 plt.show()
 
