@@ -62,6 +62,7 @@ for i, s in enumerate(samples):
     print(s)
     # Select data belonging to sample
     location = data.loc[data['Filename'].str.contains(s)]
+    # print(np.max(location['D50(mm)']) - np.min(location['D50(mm)']))
     location_sort = location.set_index('Depth').sort_index() # set index to depth
     location_plot = location_sort[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].values.T * 1000 # convert to values in mm's
     colorcodes = location_sort['colorval']
@@ -82,7 +83,7 @@ for i, s in enumerate(samples):
 
     # Set limits and ticks of subplot    
     axs[plot_loc_row[i], plot_loc_col[i]].set_xlim(175, 475)
-    axs[plot_loc_row[i], plot_loc_col[i]].set_ylim(0, 12.5)
+    axs[plot_loc_row[i], plot_loc_col[i]].set_ylim(-1.7, 10.5)
     axs[plot_loc_row[i], plot_loc_col[i]].set_yticks(range(1,11))
     axs[plot_loc_row[i], plot_loc_col[i]].set_yticklabels(depths)
         
@@ -92,8 +93,9 @@ for i, s in enumerate(samples):
     # Add average and standard deviation of median grain sizes
     avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort.loc[:, 'D50(mm)'])])
     props = dict(facecolor='white', edgecolor = 'white')
-    axs[plot_loc_row[i], plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
-    axs[plot_loc_row[i], plot_loc_col[i]].text(200, 11.85,'$\u00f8_{50}$ = ' + str(avg) + '\t   $\u03C3_{50}$ = ' + str(stddev), fontsize=14, bbox = props)
+    axs[plot_loc_row[i], plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
+    #axs[plot_loc_row[i], plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
+    axs[plot_loc_row[i], plot_loc_col[i]].text(avg+10, -0.52,'$\u00f8_{50}$ = ' + str(avg), fontsize=14, bbox = props) #+ '\t   $\u03C3_{50}$ = ' + str(stddev)
     
 # Flip axes so depth is shown correctly    
 plt.gca().invert_yaxis()    

@@ -103,10 +103,10 @@ for i, s in enumerate(locations):
         # Add average and standard deviation of median grain sizes
         avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort.loc[:, 'D50(mm)'])])
         props = dict(facecolor='white', edgecolor = 'white')
-        axs[plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
-        axs[plot_loc_col[i]].text(175, 11.95,'$\u00f8_{50}$ = ' + str(avg) , fontsize=15, bbox = props)
+        axs[plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
+        axs[plot_loc_col[i]].axhline(y=0, color = 'grey', linewidth=0.5)
+        axs[plot_loc_col[i]].text(205, -0.7,'$\u00f8_{50}$ = ' + str(avg) , fontsize=15, bbox = props)
             
-
     if '_0' in s:
         # Select data belonging to sample
         location = data_NW.xs(s, level=2, drop_level=False)
@@ -116,8 +116,9 @@ for i, s in enumerate(locations):
         # Add average and standard deviation of median grain sizes
         avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50']*1000, thicknesses[:len(location_sort.loc[:, 'D50'])])
         props = dict(facecolor='white', edgecolor = 'white')
-        axs[plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
-        axs[plot_loc_col[i]].text(175, 11.95,'$\u00f8_{50}$ = ' + str(avg), fontsize=15, bbox = props)        
+        axs[plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
+        axs[plot_loc_col[i]].axhline(y=0, color = 'grey', linewidth=0.5)
+        axs[plot_loc_col[i]].text(205, -0.7,'$\u00f8_{50}$ = ' + str(avg), fontsize=15, bbox = props)        
     
     colors = location_sort['colorval']    
     
@@ -125,7 +126,7 @@ for i, s in enumerate(locations):
     axs[plot_loc_col[i]].xaxis.grid(True) 
     
     # Plot boxplot in subplot
-    bplot = axs[plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=2.0, color='grey'))
+    bplot = axs[plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
                                                   # boxprops=dict(facecolor=c, color=c),
                                                   # capprops=dict(color=c),
                                                   # whiskerprops=dict(color=c),
@@ -137,7 +138,7 @@ for i, s in enumerate(locations):
         
     # Set limits and ticks of subplot    
     axs[plot_loc_col[i]].set_xlim(150, 550)
-    axs[plot_loc_col[i]].set_ylim(0, 12.6)
+    axs[plot_loc_col[i]].set_ylim(-2, 10.6) #axs[plot_loc_col[i]].set_ylim(0, 12.6)
     axs[plot_loc_col[i]].set_yticks(range(1,11))
     axs[plot_loc_col[i]].set_yticklabels(depths)
     

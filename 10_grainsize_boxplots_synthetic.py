@@ -72,31 +72,31 @@ for i, s in enumerate(locations):
     # include vertical grid
     axs[plot_loc_col[i]].xaxis.grid(True) 
     
+    # Add average and standard deviation of median grain sizes
+    avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50']*1000, thicknesses[:len(location_sort.loc[:, 'D50'])])
+    props = dict(facecolor='white', edgecolor = 'white')
+    axs[plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
+    #axs[plot_loc_col[i]].axhline(y=0.17, color = 'grey', linewidth=0.5)
+    axs[plot_loc_col[i]].text(avg-150, -0.3,'$\u00f8_{50}$ = ' + str(avg), fontsize=14, bbox = props) #+ '\t  $\u03C3_{50}$ = ' + str(stddev)
+        
     # Plot boxplot in subplot
-    bplot = axs[plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=50.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=2.0, color='grey'))
+    bplot = axs[plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=50.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
                                                   # boxprops=dict(facecolor=c, color=c),
                                                   # capprops=dict(color=c),
                                                   # whiskerprops=dict(color=c),
                                                   # flierprops=dict(color=c, markeredgecolor=c),
                                                   # )
-
-    for patch, color in zip(bplot['boxes'], colors):
-        patch.set_facecolor(color)
-        
     # Set limits and ticks of subplot    
     axs[plot_loc_col[i]].set_xlim(200, 550)
-    axs[plot_loc_col[i]].set_ylim(0, 12.5)
+    axs[plot_loc_col[i]].set_ylim(-1.2, 10.5)
     axs[plot_loc_col[i]].set_yticks(range(1,11))
-    axs[plot_loc_col[i]].set_yticklabels(depths)
+    axs[plot_loc_col[i]].set_yticklabels(['2', '4', '8', '14', '20', '26', '32', '38', '44', '50'])
     
     axs[plot_loc_col[i]].tick_params(axis='both', which='major', labelsize=16)
     axs[plot_loc_col[i]].tick_params(axis='both', which='minor', labelsize=16)
-    
-    # Add average and standard deviation of median grain sizes
-    avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50']*1000, thicknesses[:len(location_sort.loc[:, 'D50'])])
-    props = dict(facecolor='white', edgecolor = 'white')
-    axs[plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
-    axs[plot_loc_col[i]].text(215, 11.85,'$\u00f8_{50}$ = ' + str(avg) + '\t  $\u03C3_{50}$ = ' + str(stddev), fontsize=14, bbox = props)
+
+    for patch, color in zip(bplot['boxes'], colors):
+        patch.set_facecolor(color)
         
 # Flip axes so depth is shown correctly    
 plt.gca().invert_yaxis()    

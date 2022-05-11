@@ -83,16 +83,24 @@ for i, s in enumerate(samples1):
     print(s)
     # Select data belonging to sample
     location = data.loc[data['Filename'].str.contains('sample' + str(s) + '_')]
+    #print(np.max(location['D50(mm)']) - np.min(location['D50(mm)']))
     location_sort = location.set_index('Depth').sort_index() # set index to depth
     location_plot = location_sort[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].values.T * 1000 # convert to values in mm's
     colorcodes = location_sort['colorval']
 
     # include vertical grid
     axs[plot_loc_row[i], plot_loc_col[i]].xaxis.grid(True)        
-    
+
+    # Add average and standard deviation of median grain sizes
+    avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort.loc[:, 'D50(mm)'])])
+    props = dict(facecolor='white', edgecolor = 'white')
+    axs[plot_loc_row[i], plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
+    #axs[plot_loc_row[i], plot_loc_col[i]].axhline(y=0.17, color = 'grey', linewidth=0.5)
+    axs[plot_loc_row[i], plot_loc_col[i]].text(avg+30, -0.5,'$\u00f8_{50}$ = ' + str(avg), fontsize=14, bbox = props) # + '\t  $\u03C3_{50}$ = ' + str(stddev)
+
     # Plot boxplot in subplot
     c = 'red'
-    bplot = axs[plot_loc_row[i], plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=2.0, color='grey'))
+    bplot = axs[plot_loc_row[i], plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
                                                   # boxprops=dict(facecolor=c, color=c),
                                                   # capprops=dict(color=c),
                                                   # whiskerprops=dict(color=c),
@@ -100,21 +108,16 @@ for i, s in enumerate(samples1):
                                                   # )
     for patch, color in zip(bplot['boxes'], colorcodes):
         patch.set_facecolor(color)
-        
+
     # Set limits and ticks of subplot    
     axs[plot_loc_row[i], plot_loc_col[i]].set_xlim(175, 850)
-    axs[plot_loc_row[i], plot_loc_col[i]].set_ylim(0, 12.5)
+    axs[plot_loc_row[i], plot_loc_col[i]].set_ylim(-1.7, 10.5)
     axs[plot_loc_row[i], plot_loc_col[i]].set_yticks(range(1,11))
     axs[plot_loc_row[i], plot_loc_col[i]].set_yticklabels(depths)
     
     axs[plot_loc_row[i], plot_loc_col[i]].tick_params(axis='both', which='major', labelsize=16)
     axs[plot_loc_row[i], plot_loc_col[i]].tick_params(axis='both', which='minor', labelsize=16)
-
-    # Add average and standard deviation of median grain sizes
-    avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort.loc[:, 'D50(mm)'])])
-    props = dict(facecolor='white', edgecolor = 'white')
-    axs[plot_loc_row[i], plot_loc_col[i]].axhline(y=10.65, color = 'grey', linewidth=0.5)
-    axs[plot_loc_row[i], plot_loc_col[i]].text(210, 11.85,'$\u00f8_{50}$ = ' + str(avg) + '\t  $\u03C3_{50}$ = ' + str(stddev), fontsize=14, bbox = props)
+        
                 
 # Flip axes so depth is shown correctly    
 plt.gca().invert_yaxis()    
@@ -183,6 +186,7 @@ for i, s in enumerate(samples2):
     print(i, s)
     # Select data belonging to sample
     location = data.loc[data['Filename'].str.contains('sample' + str(s) + '_')]
+    # print(np.max(location['D50(mm)']) - np.min(location['D50(mm)']))
     location_sort = location.set_index('Depth').sort_index() # set index to depth
     location_plot = location_sort[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].iloc[0:len(depths2)].values.T * 1000 # convert to values in mm's
     colorcodes2 = location_sort['colorval2']
@@ -266,6 +270,7 @@ for i, s in enumerate(samples3):
     print(i, s)
     # Select data belonging to sample
     location = data.loc[data['Filename'].str.contains('sample' + str(s) + '_')]
+    # print(np.max(location['D50(mm)']) - np.min(location['D50(mm)']))
     location_sort = location.set_index('Depth').sort_index() # set index to depth
     location_plot = location_sort[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].iloc[0:len(depths)].values.T * 1000 # convert to values in mm's
     colorcodes = location_sort['colorval']
@@ -275,7 +280,7 @@ for i, s in enumerate(samples3):
     
     # Plot boxplot in subplot
     c = 'red'
-    bplot = axs[plot_loc_row[i], plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=2.0, color='grey'))
+    bplot = axs[plot_loc_row[i], plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
                                                   # boxprops=dict(facecolor=c, color=c),
                                                   # capprops=dict(color=c),
                                                   # whiskerprops=dict(color=c),
