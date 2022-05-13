@@ -102,10 +102,11 @@ fig1.subplots_adjust(bottom=0.2)
 
 plt.plot(dist_new_0502, elev_0502_1, 'k', linewidth = 2.5, label = 'Before high water')
 plt.plot(dist_new_0502, elev_0502_2, 'grey', linewidth = 2.5, label = 'After high water')
-plt.hlines(sample_points_0502_HW.elev_proj, 0, sample_points_0502_HW.dist, color='royalblue', linewidth=2, label = 'High water line')
+plt.hlines(sample_points_0502_HW.elev_proj, -5, sample_points_0502_HW.dist, color='royalblue', linewidth=2)
+plt.hlines(sample_points_0502_HW.elev_proj-1.85, -5, 3, color='royalblue', linewidth=2)
 plt.scatter(sample_points_0502.iloc[0:3].dist, sample_points_0502.iloc[0:3].elev_proj+0.08, color='k', marker='v', linewidth=2, zorder=10, s=100, label='Sample location')
 
-plt.xlim([0, 110])
+plt.xlim([-5, 110])
 plt.ylim([-0.5, 2.5])
 ax1.tick_params(axis='both', which='major', labelsize=16)
 ax1.set_xlabel('Cross-shore distance (m)', fontsize=16)
@@ -113,6 +114,9 @@ ax1.set_ylabel('Elevation (m)', fontsize=16)
 locs = ['1','2', '3']
 for i, txt in enumerate(locs):
     ax1.annotate(txt, (sample_points_0502.iloc[0:3].dist[i]-0.85, sample_points_0502.iloc[0:3].elev_proj[i]+0.28), fontsize=16)
+    
+ax1.annotate('HW', (sample_points_0502.iloc[0:3].dist[i]-44, sample_points_0502.iloc[0:3].elev_proj[i]+0.65), fontsize=16, color='royalblue')
+ax1.annotate('LW', (sample_points_0502.iloc[0:3].dist[i]-84, sample_points_0502.iloc[0:3].elev_proj[i]-1.18), fontsize=16, color='royalblue')
 
 leg = plt.legend(fontsize=16, loc='upper left', framealpha=1)
 
@@ -224,8 +228,9 @@ fig2.subplots_adjust(bottom=0.2)
 
 plt.plot(dist_new_2101, elev_2101_1, 'k', linewidth = 2.5, label = 'Before high water')
 plt.plot(dist_new_2101, elev_2101_2, 'grey', linewidth = 2.5, label = 'After high water')
-plt.hlines(sample_points_2101_HW.iloc[3].elev_proj, 0, sample_points_2101_HW.iloc[3].dist, color='royalblue', linewidth=2, label = 'High water line')
-plt.scatter(sample_points_2101_1.dist, sample_points_2101_1.elev_proj+0.06, color='k', marker='v', linewidth=2, zorder=10, s=100, label = 'Sample location')
+plt.hlines(sample_points_2101_HW.iloc[3].elev_proj, 0, sample_points_2101_HW.iloc[3].dist, color='royalblue', linewidth=2)
+plt.hlines(sample_points_2101_HW.iloc[3].elev_proj-2.69, 0, 16, color='royalblue', linewidth=2)
+plt.scatter(sample_points_2101_1.dist, sample_points_2101_1.elev_proj+0.10, color='k', marker='v', linewidth=2, zorder=10, s=100, label = 'Sample location')
 # plt.scatter(sample_points_2101_2.dist, sample_points_2101_2.elev_proj+0.04, color='k', marker='v', linewidth=2, zorder=10, s=100)
 # plt.scatter(points_2101_eropin.dist, points_2101_eropin.elev_proj+0.06, color='r', marker='v', linewidth=2, zorder=10, s=100)
 
@@ -236,7 +241,10 @@ ax2.set_xlabel('Cross-shore distance (m)', fontsize=16)
 ax2.set_ylabel('Elevation (m)', fontsize=16)
 locs = ['1','3', '2']
 for i, txt in enumerate(locs):
-    ax2.annotate(txt, (sample_points_2101_1.dist[i]-0.7, sample_points_2101_1.elev_proj[i]+0.28), fontsize=16)
+    ax2.annotate(txt, (sample_points_2101_1.dist[i]-0.7, sample_points_2101_1.elev_proj[i]+0.33), fontsize=16)
+    
+ax2.annotate('HW', (sample_points_2101_1.dist[i]-16, sample_points_2101_1.elev_proj[i]+1.5), fontsize=16, color='royalblue')
+ax2.annotate('LW', (sample_points_2101_1.dist[i]-41.5, sample_points_2101_1.elev_proj[i]-1.2), fontsize=16, color='royalblue')
 
 leg = plt.legend(fontsize=16, loc='upper left', framealpha=1)
 
@@ -286,14 +294,17 @@ sample_points_2308_HW['elev_proj'] = get_interpolation(dist_proj_2308_2, points_
 fig3, ax3 = plt.subplots(figsize=(11, 3.5))
 fig3.subplots_adjust(bottom=0.2)
 
-plt.plot(dist_new_2308, elev_2308_1, 'k', linewidth = 2.5, label = 'Before high water')
-plt.plot(dist_new_2308, elev_2308_2, 'grey', linewidth = 2.5, label = 'After high water')
-plt.hlines(sample_points_2308_HW.elev_proj, 0, sample_points_2308_HW.dist, color='royalblue', linewidth=2, label = 'High water line')
+plt.plot(dist_new_2308, elev_2308_1, 'k', linewidth = 2.5, label = 'Before HW')
+plt.plot(dist_new_2308, elev_2308_2, 'grey', linewidth = 2.5, label = 'After HW')
+plt.hlines(sample_points_2308_HW.elev_proj,-10, sample_points_2308_HW.dist, color='royalblue', linewidth=2)
+plt.hlines(sample_points_2308_HW.elev_proj-2.05, -10, 4, color='royalblue', linewidth=2)
+plt.hlines(sample_points_2308_HW.elev_proj-1.5, -10, 36, color='royalblue', linewidth=2)
 plt.scatter(sample_points_2308_1.dist, sample_points_2308_1.elev_proj+0.1, color='k', marker='v', linewidth=2, zorder=10, s=100, label='Sample location')
 # plt.scatter(sample_points_2308_2.dist, sample_points_2308_2.elev_proj+0.04, color='k', marker='v', linewidth=2, zorder=10, s=100)
 
-plt.xlim([0, 150])
-plt.ylim([1, 4])
+
+plt.xlim([-10, 150])
+plt.ylim([0.7, 4])
 ax3.tick_params(axis='both', which='major', labelsize=16)
 ax3.set_xlabel('Cross-shore distance (m)', fontsize=16)
 ax3.set_ylabel('Elevation (m)', fontsize=16)
@@ -301,7 +312,11 @@ locs = ['1', '2','3']
 for i, txt in enumerate(locs):
     ax3.annotate(txt, (sample_points_2308_1.dist[i]-1.2, sample_points_2308_1.elev_proj[i]+0.28), fontsize=16)
 
-leg = plt.legend(fontsize=16, loc='upper left', framealpha = 1)
+ax3.annotate('HW', (sample_points_2308_1.dist[i]-107, sample_points_2308_1.elev_proj[i]+0.20), fontsize=16, color='royalblue')
+ax3.annotate('HLW', (sample_points_2308_1.dist[i]-107, sample_points_2308_1.elev_proj[i]-1.3), fontsize=16, color='royalblue')
+ax3.annotate('LLW', (sample_points_2308_1.dist[i]-107, sample_points_2308_1.elev_proj[i]-1.85), fontsize=16, color='royalblue')
+
+leg = plt.legend(fontsize=16, loc='lower right', framealpha = 1)
 
 file_name = 'Waldport_profile_230821'
 plt.savefig(outputdir + '/CoastalProfiles/' + file_name + '.png')
