@@ -120,4 +120,4 @@ plt.show()
 
 # Save as file
 file_name = 'Grain_size_vertical'
-plt.savefig(output_dir + file_name + '_synthetic_boxplot.png')
+plt.savefig(output_dir + file_name + '_synthetic_boxplot.png', dpi=800)

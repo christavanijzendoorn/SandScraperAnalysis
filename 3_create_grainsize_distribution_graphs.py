@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+on-# -*- coding: utf-8 -*-
 """
 Created on Wed Oct 13 08:48:04 2021
 
@@ -62,11 +62,11 @@ if os.path.isfile(f):
     
    
     # plot distribution
-    fig1, ax1 = plt.subplots(1, 1, figsize=(7, 5))
-    fig1.subplots_adjust(bottom=0.2)
+    fig1, ax1 = plt.subplots(1, 1, figsize=(8, 6))
+    fig1.subplots_adjust(bottom=0.2, right=0.88)
     ax1.plot(grain_size_mm, p, '-', color = 'royalblue', linewidth = 3, label = 'Waldport')
     ax1.set_xlabel("Grain size ($\mu$m)", fontsize = 20)
-    ax1.set_ylabel("Percentage (%)", fontsize = 20)
+    ax1.set_ylabel("Volume percentage (%)", fontsize = 20)
     ax1.set_xlim([0., 1])   
     
 #%% Load and plot for NOORDWIJK
@@ -90,13 +90,21 @@ for i, x in enumerate(percentages):
     if i == 0:
         q.append(0)
     else:
-        q.append((percentages[i-1] - x) / (200/9))
+        q.append((percentages[i-1] - x) ) #/ (200/9)
 
 from scipy import interpolate
 f = interpolate.interp1d(diameters, q)
 q_intp = f(grain_size_mm)
 
-ax1.plot(diameters, q, 'D-', markersize = 6, color = 'forestgreen', linewidth = 3, label = 'Noordwijk')
+ax2 = ax1.twinx()
+ax2.plot(diameters, q, 'D-', markersize = 6, color = 'forestgreen', linewidth = 3, label = 'Noordwijk')
+ax2.set_ylabel("Weight percentage (%)", fontsize = 20, color = 'forestgreen')
+ax2.tick_params(axis='y', which='major', labelsize=18)
+ax2.set_xlim([0., 1])   
+ax2.set_ylim([0., 50])  
+
+ax1.plot([-10,-20], [-10,-20], 'D-', markersize = 6, color = 'forestgreen', linewidth = 3, label = 'Noordwijk') # dummy for legend building
+
 
 #%% Load and plot for DUCK
 
@@ -142,7 +150,9 @@ ax1.legend(fontsize = 20)
 ax1.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
 ax1.set_xticklabels(['0', '200', '400', '600', '800', '1000'])
 ax1.tick_params(axis='both', which='major', labelsize=18)
+ax1.set_ylim([0., 5])  
 plt.show()
 
 file_name = 'Figure2c_grainsizedistribution'
 plt.savefig(outputdir + file_name + '.png')
+plt.savefig(outputdir + file_name + '.eps', format='eps')

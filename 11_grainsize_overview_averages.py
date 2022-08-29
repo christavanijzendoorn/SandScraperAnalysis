@@ -239,5 +239,6 @@ axs[1,0].annotate('$\u276E$ sea    \t\t\t   land $\u276F$    \t\t\t     $\u276E$
 # Save file
 file_name = 'Averaged_per_site'
 plt.savefig(outputdir + '/VerticalSampling/' + file_name + '.png')
+# plt.savefig(outputdir + '/VerticalSampling/' + file_name + '.eps')
 
         

@@ -27,7 +27,7 @@ import matplotlib.colors as colors
 import matplotlib.cm as cmx
 
 vmin = 240
-vmax = 390
+vmax = 385
 
 grainsizes_dir_NW = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Data/Noordwijk/Grainsizes/"
 grainsizes_file_NW = 'Grainsize_data_Noordwijk.xlsx'
@@ -54,59 +54,25 @@ norm  = colors.Normalize(vmin=vmin, vmax=vmax)
 scalarMap = cmx.ScalarMappable(norm=norm, cmap='hot_r')
 data_NW['colorval'] = data_NW['D50']
 data_NW['colorval'] = [scalarMap.to_rgba(d*1000) for d in data_NW['colorval']]
-#%%#### PLOT VERTICAL SAMPLING
-
-camsizer_dir = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Data/Duck/Grainsizes/"
-input_file = 'Grainsize_data_Duck_repetition.xlsx'
-
-data_Duck = pd.read_excel(camsizer_dir + input_file, engine='openpyxl')
-
-depths = []
-for i, d in enumerate(data_Duck['Filename'].values):
-    if '_2.'in d:
-        depth = int(d.split('_')[-2].replace('mm',''))
-    else:        
-        depth = int(d.split('_')[-1].split('.')[0].replace('mm',''))
-    depths.append(depth)
-data_Duck['Depth'] = depths
-
-# Select data belonging to sample
-Duck = data_Duck.loc[data_Duck['Filename'].str.contains('sample2')]
-
-# Prepare coloring based on median value
-norm  = colors.Normalize(vmin=vmin, vmax=vmax)
-scalarMap = cmx.ScalarMappable(norm=norm, cmap='hot_r')
-Duck['colorval'] = Duck['D50(mm)']
-Duck['colorval'] = [scalarMap.to_rgba(d*1000) for d in Duck['colorval']]
 
 #%%
 depths = [2, 4, 8, 14, 20, 26, 32, 38, 44, 50]
 
-locations = ['_05', '_06', 'sample2_', 'sample2rep_']
-cols = ['Noordwijk 1', 'Noordwijk 2', 'Duck 1', 'Duck 2']
-plot_loc_col = [0, 1, 2, 3]
+locations = ['_05', '_06']
+locations2 = ['sample2_', 'sample2rep_']
+cols = ['Noordwijk 1', 'Noordwijk 2']
+cols2 = ['Duck 1', 'Duck 2']
+plot_loc_col = [0, 1]
 
-fig, axs = plt.subplots(nrows=1, ncols=4, sharex=True, sharey=True, figsize=(10, 4))
-fig.subplots_adjust(right=0.83)
+fig, axs = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True, figsize=(5, 4))
+fig.subplots_adjust(right=0.75)
+fig.subplots_adjust(left=0.15)
 fig.subplots_adjust(bottom=0.2)
 fig.subplots_adjust(top=0.8)
 
 for i, s in enumerate(locations):
     print(s)
     
-    if 'sample' in s:
-        # Select data belonging to sample
-        location = Duck.loc[Duck['Filename'].str.contains(s)]
-        location_sort = location.set_index('Depth').sort_index() # set index to depth
-        location_plot = location_sort[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].values.T * 1000 
-        
-        # Add average and standard deviation of median grain sizes
-        avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort.loc[:, 'D50(mm)'])])
-        props = dict(facecolor='white', edgecolor = 'white')
-        axs[plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
-        axs[plot_loc_col[i]].axhline(y=0, color = 'grey', linewidth=0.5)
-        axs[plot_loc_col[i]].text(205, -0.7,'$\u00f8_{50}$ = ' + str(avg) , fontsize=15, bbox = props)
-            
     if '_0' in s:
         # Select data belonging to sample
         location = data_NW.xs(s, level=2, drop_level=False)
@@ -116,28 +82,30 @@ for i, s in enumerate(locations):
         # Add average and standard deviation of median grain sizes
         avg, stddev = weighted_avg_and_std(location_sort.loc[:, 'D50']*1000, thicknesses[:len(location_sort.loc[:, 'D50'])])
         props = dict(facecolor='white', edgecolor = 'white')
-        axs[plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
-        axs[plot_loc_col[i]].axhline(y=0, color = 'grey', linewidth=0.5)
-        axs[plot_loc_col[i]].text(205, -0.7,'$\u00f8_{50}$ = ' + str(avg), fontsize=15, bbox = props)        
+        axs[plot_loc_col[i]-2].axvline(x=avg, color = 'dimgrey', linewidth=2)
+        axs[plot_loc_col[i]-2].axhline(y=-0.24, color = 'grey', linewidth=0.5)
+        axs[plot_loc_col[i]-2].text(190, -0.82,'$\u00f8_{50}$ = ' + str(avg), fontsize=15, bbox = props)        
     
-    colors = location_sort['colorval']    
+    colors1 = location_sort['colorval']    
     
     # include vertical grid
-    axs[plot_loc_col[i]].xaxis.grid(True) 
+    axs[plot_loc_col[i]-2].xaxis.grid(True) 
+
     
     # Plot boxplot in subplot
-    bplot = axs[plot_loc_col[i]].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
+    bplot = axs[plot_loc_col[i]-2].boxplot(location_plot, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
+    
                                                   # boxprops=dict(facecolor=c, color=c),
                                                   # capprops=dict(color=c),
                                                   # whiskerprops=dict(color=c),
                                                   # flierprops=dict(color=c, markeredgecolor=c),
                                                   # )
 
-    for patch, color in zip(bplot['boxes'], colors):
+    for patch, color in zip(bplot['boxes'], colors1):
         patch.set_facecolor(color)
         
     # Set limits and ticks of subplot    
-    axs[plot_loc_col[i]].set_xlim(150, 550)
+    axs[plot_loc_col[i]].set_xlim(150, 450)
     axs[plot_loc_col[i]].set_ylim(-2, 10.6) #axs[plot_loc_col[i]].set_ylim(0, 12.6)
     axs[plot_loc_col[i]].set_yticks(range(1,11))
     axs[plot_loc_col[i]].set_yticklabels(depths)
@@ -158,25 +126,16 @@ for ax in axs.flat:
     
 # Add x-label and subplot titles    
 pad = 5
-ax.annotate('Noordwijk', xy=(-200, 1.5), xytext=(-230, 120), 
+ax.annotate('Noordwijk', xy=(-200, 1.5), xytext=(30, 120), 
             xycoords=ax.yaxis.label, textcoords='offset points',
             size='xx-large', ha='right', va='center')    
 
-ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(-200, -125), 
-            xycoords=ax.yaxis.label, textcoords='offset points',
-            size='xx-large', ha='right', va='center')   
-
-pad = 5
-ax.annotate('Duck', xy=(-200, 1.5), xytext=(15, 120), 
-            xycoords=ax.yaxis.label, textcoords='offset points',
-            size='xx-large', ha='right', va='center')    
-
-ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(65, -125), 
+ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(60, -125), 
             xycoords=ax.yaxis.label, textcoords='offset points',
             size='xx-large', ha='right', va='center')   
 
 # Add colorbar    
-cax = fig.add_axes([0.85, 0.20, 0.02, 0.60])
+cax = fig.add_axes([0.80, 0.20, 0.02, 0.60])
 fig.colorbar(scalarMap, cax=cax, orientation='vertical')
 cax.tick_params(labelsize=18) 
 cax.set_ylabel('Median grain size ($\mu$m)', fontsize = 18) 
@@ -186,8 +145,107 @@ plt.show()
 
 # Save as file
 file_name = 'Grain_size_vertical'
-plt.savefig(output_dir + file_name + '_repetition_boxplot.png')
+plt.savefig(output_dir + file_name + '_repetition_boxplot.png', dpi=800)
 
+#%%#### PLOT VERTICAL SAMPLING DUCK
+
+camsizer_dir = "C:/Users/cijzendoornvan/OneDrive - Delft University of Technology/Documents/DuneForce/GRAINSIZE/Data/Duck/Grainsizes/"
+input_file = 'Grainsize_data_Duck_repetition.xlsx'
+
+data_Duck = pd.read_excel(camsizer_dir + input_file, engine='openpyxl')
+
+depths = []
+for i, d in enumerate(data_Duck['Filename'].values):
+    if '_2.'in d:
+        depth = int(d.split('_')[-2].replace('mm',''))
+    else:        
+        depth = int(d.split('_')[-1].split('.')[0].replace('mm',''))
+    depths.append(depth)
+data_Duck['Depth'] = depths
+
+# Select data belonging to sample
+Duck = data_Duck.loc[data_Duck['Filename'].str.contains('sample2')]
+
+
+vmin2 = 300
+vmax2 = 385
+# Prepare coloring based on median value
+norm2  = colors.Normalize(vmin=vmin2, vmax=vmax2)
+scalarMap2 = cmx.ScalarMappable(norm=norm2, cmap='hot_r')
+Duck['colorval'] = Duck['D50(mm)']
+Duck['colorval'] = [scalarMap2.to_rgba(d*1000) for d in Duck['colorval']]
+
+
+fig2, axs2 = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True, figsize=(5, 4))
+fig2.subplots_adjust(right=0.75)
+fig2.subplots_adjust(left=0.15)
+fig2.subplots_adjust(bottom=0.2)
+fig2.subplots_adjust(top=0.8)
+
+for i, s in enumerate(locations2):
+    print(s)
+    if 'sample' in s:
+        # Select data belonging to sample
+        location2 = Duck.loc[Duck['Filename'].str.contains(s)]
+        location_sort2 = location2.set_index('Depth').sort_index() # set index to depth
+        location_plot2 = location_sort2[['D16(mm)', 'D25(mm)', 'D50(mm)', 'D75(mm)', 'D84(mm)']].values.T * 1000 
+        
+        # Add average and standard deviation of median grain sizes
+        avg, stddev = weighted_avg_and_std(location_sort2.loc[:, 'D50(mm)']*1000, thicknesses[:len(location_sort2.loc[:, 'D50(mm)'])])
+        props = dict(facecolor='white', edgecolor = 'white')
+        axs2[plot_loc_col[i]].axvline(x=avg, color = 'dimgrey', linewidth=2)
+        axs2[plot_loc_col[i]].axhline(y=-0.24, color = 'grey', linewidth=0.5)
+        axs2[plot_loc_col[i]].text(205, -0.82,'$\u00f8_{50}$ = ' + str(avg) , fontsize=15, bbox = props)
+            
+        
+    colors2 = location_sort2['colorval']    
+    
+    axs2[plot_loc_col[i]].xaxis.grid(True) 
+    bplot2 = axs2[plot_loc_col[i]].boxplot(location_plot2, vert=False, showfliers=False, whis=5.0, widths=0.5, patch_artist = True, boxprops=dict(color='black'), medianprops=dict(linewidth=1.5, color='grey'))
+
+    for patch, color in zip(bplot2['boxes'], colors2):
+        patch.set_facecolor(color)
+
+    axs2[plot_loc_col[i]].set_xlim(150, 550)
+    axs2[plot_loc_col[i]].set_ylim(-2, 10.6) #axs[plot_loc_col[i]].set_ylim(0, 12.6)
+    axs2[plot_loc_col[i]].set_yticks(range(1,11))
+    depths = [2, 4, 8, 14, 20, 26, 32, 38, 44, 50]
+    axs2[plot_loc_col[i]].set_yticklabels(depths)
+    
+    axs2[plot_loc_col[i]].tick_params(axis='both', which='major', labelsize=16)
+    axs2[plot_loc_col[i]].tick_params(axis='both', which='minor', labelsize=16)    
+    
+# Flip axes so depth is shown correctly    
+plt.gca().invert_yaxis()    
+plt.rcParams.update({'axes.titlesize': 'large'})
+
+# Set axes labels and only show them for outer axes 
+# plt.setp(axs.flat, xlabel='Grain size ($\mu$m)', ylabel='Depth (mm)')    
+for ax in axs2.flat:
+    # ax.set_xlabel('Grain size ($\mu$m)', fontsize=18)
+    ax.set_ylabel('Depth (mm)', fontsize=18)
+    ax.label_outer()
+
+pad = 5
+ax.annotate('Duck', xy=(-200, 1.5), xytext=(10, 120), 
+            xycoords=ax.yaxis.label, textcoords='offset points',
+            size='xx-large', ha='right', va='center')    
+
+ax.annotate('Grain size ($\mu$m)', xy=(-200, 1.5), xytext=(65, -125), 
+            xycoords=ax.yaxis.label, textcoords='offset points',
+            size='xx-large', ha='right', va='center')   
+
+cax2 = fig2.add_axes([0.80, 0.20, 0.02, 0.60])
+fig2.colorbar(scalarMap2, cax=cax2, orientation='vertical')
+cax2.tick_params(labelsize=18) 
+cax2.set_ylabel('Median grain size ($\mu$m)', fontsize = 18) 
+
+# Finish layout
+plt.show()
+
+# Save as file
+file_name = 'Grain_size_vertical'
+plt.savefig(output_dir + file_name + '_repetition_boxplot2.png', dpi=800)
 #%% Calculate averages
 thicknesses = [2, 2, 4, 6, 6, 6, 6, 6, 6, 6]
 
@@ -206,9 +264,9 @@ NW_1_FS_avg = 1000* np.sum(NW_1.iloc[:3].loc[:,'thickness']*NW_1.iloc[:3].loc[:,
 NW_1_CS_avg = 1000* np.sum(NW_1.iloc[3:7].loc[:,'thickness']*NW_1.iloc[3:7].loc[:, 'D50']) / np.sum(NW_1.iloc[3:7].loc[:, 'thickness'].values)
 
 
-Duck_1 = Duck.loc[Duck['Filename'].str.contains(locations[2])]
+Duck_1 = Duck.loc[Duck['Filename'].str.contains(locations2[0])]
 Duck_1 = Duck_1.set_index('Depth').sort_index() # set index to depth
-Duck_2 = Duck.loc[Duck['Filename'].str.contains(locations[3])]
+Duck_2 = Duck.loc[Duck['Filename'].str.contains(locations[1])]
 Duck_2 = Duck_2.set_index('Depth').sort_index() # set index to depth
 Duck_1.loc[:, 'thickness'] = thicknesses
 Duck_2.loc[:, 'thickness'] = thicknesses
